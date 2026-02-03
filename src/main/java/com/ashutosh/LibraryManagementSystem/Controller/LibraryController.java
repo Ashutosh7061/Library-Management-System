@@ -1,0 +1,33 @@
+package com.ashutosh.LibraryManagementSystem.Controller;
+
+import com.ashutosh.LibraryManagementSystem.Entity.Library;
+import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/library")
+@RequiredArgsConstructor
+public class LibraryController {
+
+    private final LibraryService libraryService;
+
+    @PostMapping("/add")
+    public Library addBook(@RequestBody Library book){
+        return libraryService.addBook(book);
+    }
+
+    // we can't directly use .findAll because controller layer should not directly talk to repository directly.
+    @GetMapping("/all")
+    public List<Library> getAllBooks(){
+        return libraryService.getAllBooks();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteBook(@PathVariable Long id){
+        libraryService.deleteBook(id);
+        return "Book deleted Seccessfully";
+    }
+}
