@@ -3,6 +3,7 @@ package com.ashutosh.LibraryManagementSystem.Service;
 import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Exception.BookNotAvailableException;
+import com.ashutosh.LibraryManagementSystem.Exception.MaxBookLimitException;
 import com.ashutosh.LibraryManagementSystem.Repository.LibraryRepository;
 import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,10 @@ public class LibraryService {
     //For issuing book
     public String issueBook(Long userId, String bookTitle){
         User user = userService.getUser(userId);
+
+        if(user.getNoOfBooksTaken() >= 3){
+            throw new MaxBookLimitException("Return the previous book to take new book, you alredy have taken 3 books");
+        }
 
         Library book = libraryRepository.findByTitle(bookTitle)
                 .orElseThrow(()-> new BookNotAvailableException("Book not found with given author name"));

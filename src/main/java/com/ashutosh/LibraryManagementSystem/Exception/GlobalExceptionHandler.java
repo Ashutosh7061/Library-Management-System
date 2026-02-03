@@ -26,4 +26,9 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
+
+    @ExceptionHandler(MaxBookLimitException.class)
+    public ResponseEntity<String> handleMaxBookLimit(MaxBookLimitException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
