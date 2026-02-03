@@ -1,5 +1,6 @@
 package com.ashutosh.LibraryManagementSystem.Entity;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@JsonPropertyOrder({ "id", "name", "email", "phoneNo", "noOfBooksTaken" })
 public class User {
 
     @Id
@@ -20,6 +22,6 @@ public class User {
     private String email;
     private String phoneNo;
 
-    private int noOfBooksTaken;
+    private int noOfBooksTaken = 0;
 
 }
