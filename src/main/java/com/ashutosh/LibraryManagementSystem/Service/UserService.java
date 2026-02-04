@@ -42,7 +42,6 @@ public class UserService {
                 .orElseThrow(()-> new UserNotFoundException("Please Register first"));
     }
 
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
