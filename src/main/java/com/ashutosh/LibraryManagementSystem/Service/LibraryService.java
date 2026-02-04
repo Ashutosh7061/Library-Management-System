@@ -79,4 +79,27 @@ public class LibraryService {
 
         return "Book returned successfully";
     }
+
+    public List<String> getAllBookTitles(){
+        return libraryRepository.findAllTitles();
+    }
+
+    public List<Library> searchBookByTitle(String title){
+        List<Library> books = libraryRepository.findByTitleContainingIgnoreCase(title);
+
+        if(books.isEmpty()){
+            throw new BookNotAvailableException("No book found with given title");
+        }
+
+        return books;
+    }
+
+    public List<Library> searchBookByAuthor(String author){
+        List<Library> books = libraryRepository.findByAuthorContainingIgnoreCase(author);
+
+        if(books.isEmpty()){
+            throw new BookNotAvailableException("Book not found with given author");
+        }
+        return books;
+    }
 }

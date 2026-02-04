@@ -30,4 +30,19 @@ public class LibraryController {
         libraryService.deleteBook(id);
         return "Book deleted Seccessfully";
     }
+
+    @GetMapping("/titles")
+    public List<String> getAllBookTiles(){
+        return libraryService.getAllBookTitles();
+    }
+
+    @GetMapping("/search/title")
+    public List<Library> searchByTitle(@RequestParam String title){
+        return libraryService.searchBookByTitle(title);
+    }
+
+    @GetMapping("/search/author")
+    public List<Library> searchByAuthor(@RequestParam String author){
+        return libraryService.searchBookByAuthor(author);
+    }
 }
