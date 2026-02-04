@@ -1,5 +1,6 @@
 package com.ashutosh.LibraryManagementSystem.Exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxBookLimitException.class)
     public ResponseEntity<String> handleMaxBookLimit(MaxBookLimitException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateBookException.class)
+    public ResponseEntity<String> handleDuplicatBook(DuplicateBookException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<String> handleDuplicatUser(DuplicateUserException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrity(DataIntegrityViolationException ex){
+        return new ResponseEntity<>("Email or phone number already exixts",HttpStatus.CONFLICT);
     }
 }

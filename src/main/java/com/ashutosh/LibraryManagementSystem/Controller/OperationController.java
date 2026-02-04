@@ -15,12 +15,12 @@ public class OperationController {
     private final LibraryService libraryService;
 
     @PostMapping("/issue")
-    public String issueBook(@RequestParam Long userId, @RequestParam String bookTitle){
-        return libraryService.issueBook(userId, bookTitle);
+    public String issueBook(@RequestParam Long userId, @RequestParam Long bookId){
+        return libraryService.issueBook(userId, bookId);
     }
 
     @PostMapping("/return")
-    public String returnBook(@RequestParam Long userId, @RequestParam String bookTitle){
-        return libraryService.returnBook(userId,bookTitle);
+    public String returnBook(@RequestParam Long userId, @RequestParam Long bookId){
+        return libraryService.returnBook(userId,bookId);
     }
 }
