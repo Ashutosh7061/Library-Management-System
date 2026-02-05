@@ -28,7 +28,7 @@ public class LibraryController {
     @DeleteMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id){
         libraryService.deleteBook(id);
-        return "Book deleted Seccessfully";
+        return "Book deleted successfully";
     }
 
     @GetMapping("/titles")
