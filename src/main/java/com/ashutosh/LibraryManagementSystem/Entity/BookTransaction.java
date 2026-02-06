@@ -3,6 +3,7 @@ package com.ashutosh.LibraryManagementSystem.Entity;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class BookTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("transactionId")
     private Long id;
 
     @JsonIgnore

@@ -1,5 +1,6 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
+import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
@@ -28,8 +29,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/transaction")
-    public List<BookTransaction> getUserTransaction(@PathVariable Long userId){
-        return transactionRepository.findByUser_Id(userId);
+    public List<UserTransactionDTO> getUserTransaction(@PathVariable Long userId){
+        return userService.getUserTransactionDetails(userId);
     }
 
 }
