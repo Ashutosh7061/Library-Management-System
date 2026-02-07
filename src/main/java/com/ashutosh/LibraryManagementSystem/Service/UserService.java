@@ -4,6 +4,7 @@ import com.ashutosh.LibraryManagementSystem.DTO.UserBookCountDTO;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
+import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookException;
 import com.ashutosh.LibraryManagementSystem.Exception.DuplicateUserException;
 import com.ashutosh.LibraryManagementSystem.Exception.UserNotFoundException;
@@ -93,9 +94,16 @@ public class UserService {
     }
 
 
-    public List<UserTransactionDTO> getUserTransactionDetails(Long userId){
+    public List<UserTransactionDTO> getUserTransactionDetails(Long userId, TransactionStatus status){
 
-        List<BookTransaction> transactions = bookTransactionRepository.findByUser_Id(userId);
+        List<BookTransaction> transactions;
+
+        if(status == null){
+            transactions = bookTransactionRepository.findByUser_Id(userId);
+        }
+        else{
+            transactions = bookTransactionRepository.findByUser_IdAndStatus(userId, status);
+        }
 
         return transactions.stream()
                 .map(UserTransactionDTO::new)

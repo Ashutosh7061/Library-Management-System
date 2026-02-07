@@ -47,4 +47,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDataIntegrity(DataIntegrityViolationException ex){
         return new ResponseEntity<>("Email or phone number already exixts",HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(DuplicateBookIssuedException.class)
+    public ResponseEntity<String> handleDuplicateBookIssue(DuplicateBookIssuedException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

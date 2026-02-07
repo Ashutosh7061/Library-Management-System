@@ -3,6 +3,7 @@ package com.ashutosh.LibraryManagementSystem.Controller;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
+import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,10 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/transaction")
-    public List<UserTransactionDTO> getUserTransaction(@PathVariable Long userId){
-        return userService.getUserTransactionDetails(userId);
+    public List<UserTransactionDTO> getUserTransaction(
+            @PathVariable Long userId,
+            @RequestParam(required = false)TransactionStatus status){
+        return userService.getUserTransactionDetails(userId, status);
     }
 
 }

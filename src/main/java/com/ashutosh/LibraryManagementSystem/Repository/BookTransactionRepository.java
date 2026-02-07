@@ -12,4 +12,6 @@ public interface BookTransactionRepository extends JpaRepository<BookTransaction
     List<BookTransaction> findByUser_Id(Long userId);
 
     List<BookTransaction> findByUser_IdAndStatus(Long userId, TransactionStatus status);
+
+    Optional<BookTransaction> findByUser_IdAndBook_IdAndStatus(Long userId, Long bookId, TransactionStatus status);
 }

@@ -34,4 +34,6 @@ public class BookTransaction {
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
+
+    private int fineAmount;
 }
