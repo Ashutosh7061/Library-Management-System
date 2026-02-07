@@ -6,6 +6,7 @@ import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Exception.BookNotAvailableException;
 import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookException;
+import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookIssuedException;
 import com.ashutosh.LibraryManagementSystem.Exception.MaxBookLimitException;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
 import com.ashutosh.LibraryManagementSystem.Repository.LibraryRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -56,8 +58,14 @@ public class LibraryService {
 
         User user = userService.getUser(userId);
 
+        boolean alreadyExist = transactionRepository.findByUser_IdAndBook_IdAndStatus(userId, bookId, TransactionStatus.ISSUED).isPresent();
+
+        if(alreadyExist){
+            throw new DuplicateBookIssuedException("You have already issued this same book earlier, please return that to take new book.");
+        }
+
         if(user.getNoOfBooksTaken() >= 3){
-            throw new MaxBookLimitException("Return the previous book to take new book, you alredy have taken 3 books");
+            throw new MaxBookLimitException("Return the previous book to take new book, you already have taken 3 books");
         }
 
         Library book = libraryRepository.findById(bookId)
@@ -101,24 +109,29 @@ public class LibraryService {
                         .orElseThrow(()-> new BookNotAvailableException("No active issue found"));
 
 
+        LocalDateTime returnDate = LocalDateTime.now();
+        transaction.setReturnDate(returnDate);
+
+        int fineAmount = calculateFine(transaction.getIssueDate(), returnDate);
+        transaction.setFineAmount(fineAmount);
+
+
         book.setNoOfBooks(book.getNoOfBooks() + 1);
         user.setNoOfBooksTaken(user.getNoOfBooksTaken() - 1);
 
-        transaction.setReturnDate(LocalDateTime.now());
         transaction.setStatus(TransactionStatus.RETURNED);
 
         transactionRepository.save(transaction);
 
-//        libraryRepository.save(book);
-
-        return "Book returned successfully";
+        return fineAmount > 0
+                ? "Book returned successfully. Fine amount : "+fineAmount
+                : "Book returned successfully. No fine";
     }
 
 
     public List<String> getAllBookTitles(){
         return libraryRepository.findAllTitles();
     }
-
 
 
     public List<Library> searchBookByTitle(String title){
@@ -138,5 +151,17 @@ public class LibraryService {
             throw new BookNotAvailableException("Book not found with given author");
         }
         return books;
+    }
+
+
+    public int calculateFine(LocalDateTime issueDate, LocalDateTime returnDate){
+
+        long daysKept = ChronoUnit.DAYS.between(returnDate,issueDate);
+
+        if(daysKept <= 15){
+            return 0;
+        }
+
+        return (int)(daysKept -15) * 2;
     }
 }
