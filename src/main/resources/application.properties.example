@@ -13,3 +13,10 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
+
+server.error.include-message=always
+server.error.include-stacktrace=always
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+

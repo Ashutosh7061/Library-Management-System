@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @AllArgsConstructor
 @Getter
@@ -19,8 +20,8 @@ public class UserTransactionDTO {
     private String bookTitle;
     private String bookAuthor;
 
-    private LocalDateTime issueDate;
-    private LocalDateTime returnDate;
+    private LocalDate issueDate;
+    private LocalDate returnDate;
 
     private TransactionStatus status;
 

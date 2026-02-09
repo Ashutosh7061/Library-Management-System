@@ -4,10 +4,7 @@ import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
-import com.ashutosh.LibraryManagementSystem.Exception.BookNotAvailableException;
-import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookException;
-import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookIssuedException;
-import com.ashutosh.LibraryManagementSystem.Exception.MaxBookLimitException;
+import com.ashutosh.LibraryManagementSystem.Exception.*;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
 import com.ashutosh.LibraryManagementSystem.Repository.LibraryRepository;
 import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -82,7 +80,12 @@ public class LibraryService {
         BookTransaction transaction = new BookTransaction();
         transaction.setUser(user);
         transaction.setBook(book);
-        transaction.setIssueDate(LocalDateTime.now());
+//        transaction.setIssueDate(LocalDateTime.now());
+
+        LocalDate issueDate = LocalDate.now();
+        transaction.setIssueDate(issueDate);
+        transaction.setDueDate(issueDate.plusDays(15));
+
         transaction.setStatus(TransactionStatus.ISSUED);
 
         transactionRepository.save(transaction);
@@ -95,24 +98,33 @@ public class LibraryService {
     //For returning book
     @Transactional
     public String returnBook(Long userId, Long bookId){
+
         User user = userService.getUser(userId);
 
         Library book = libraryRepository.findById(bookId)
                 .orElseThrow(()-> new BookNotAvailableException("Book not Found"));
 
         //Start Transaction
+//        BookTransaction transaction =
+//                transactionRepository
+//                        .findByUser_IdAndStatus(userId, TransactionStatus.ISSUED)
+//                        .stream().filter(t-> t.getBook().getId().equals(bookId))
+//                        .findFirst()
+//                        .orElseThrow(()-> new BookNotAvailableException("No active issue found"));
+
+
         BookTransaction transaction =
                 transactionRepository
-                        .findByUser_IdAndStatus(userId, TransactionStatus.ISSUED)
-                        .stream().filter(t-> t.getBook().getId().equals(bookId))
-                        .findFirst()
-                        .orElseThrow(()-> new BookNotAvailableException("No active issue found"));
+                        .findByUser_IdAndBook_IdAndStatus(
+                                userId, bookId, TransactionStatus.ISSUED
+                        )
+                        .orElseThrow(() -> new BookNotAvailableException("No active issue found"));
 
 
-        LocalDateTime returnDate = LocalDateTime.now();
+        LocalDate returnDate = LocalDate.now();
         transaction.setReturnDate(returnDate);
 
-        int fineAmount = calculateFine(transaction.getIssueDate(), returnDate);
+        int fineAmount = calculateFine(transaction.getDueDate(), returnDate);
         transaction.setFineAmount(fineAmount);
 
 
@@ -154,14 +166,41 @@ public class LibraryService {
     }
 
 
-    public int calculateFine(LocalDateTime issueDate, LocalDateTime returnDate){
-
-        long daysKept = ChronoUnit.DAYS.between(returnDate,issueDate);
-
-        if(daysKept <= 15){
+    public int calculateFine(LocalDate dueDate, LocalDate returnDate){
+        if(dueDate == null || returnDate == null){
+            return 0;
+        }
+        if(!returnDate.isAfter(dueDate)){
             return 0;
         }
 
-        return (int)(daysKept -15) * 2;
+        long daysKept = ChronoUnit.DAYS.between(dueDate,returnDate);
+
+        return (int) daysKept * 2;
     }
+
+    @Transactional
+    public String renewBook(Long userID, Long transactionId){
+
+        System.out.println(">>> RENEW BOOK API HIT <<<");
+
+        BookTransaction transaction =
+                transactionRepository
+                        .findByIdAndUser_IdAndStatus(
+                                transactionId, userID, TransactionStatus.ISSUED
+                        )
+                        .orElseThrow(() ->
+                                new BookRenewalException("Active transaction not found")
+                        );
+
+        if (transaction.getDueDate() == null) {
+            transaction.setDueDate(transaction.getIssueDate().plusDays(15));
+        }
+
+        transaction.setDueDate(transaction.getDueDate().plusDays(15));
+        transactionRepository.save(transaction);
+
+        return "Book renewed successfully. New due date: " + transaction.getDueDate();
+    }
+
 }
