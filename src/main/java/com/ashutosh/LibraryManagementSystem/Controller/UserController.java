@@ -1,10 +1,10 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
-import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
+import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final BookTransactionRepository transactionRepository;
+    private final LibraryService libraryService;
 
     @PostMapping("/register")
     public User register(@RequestBody User user){
@@ -35,5 +35,15 @@ public class UserController {
             @RequestParam(required = false)TransactionStatus status){
         return userService.getUserTransactionDetails(userId, status);
     }
+
+
+    @PostMapping("/{userId}/transaction/{transactionId}/renew")
+    public String renewBook(
+            @PathVariable Long userId,
+            @PathVariable Long transactionId) {
+
+        return libraryService.renewBook(userId, transactionId);
+    }
+
 
 }

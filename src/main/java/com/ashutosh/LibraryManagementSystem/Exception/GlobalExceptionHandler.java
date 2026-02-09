@@ -52,4 +52,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDuplicateBookIssue(DuplicateBookIssuedException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(BookRenewalException.class)
+    public ResponseEntity<String> handleBookRenewException(BookRenewalException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

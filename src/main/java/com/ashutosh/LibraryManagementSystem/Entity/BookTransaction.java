@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -29,11 +29,16 @@ public class BookTransaction {
     @JoinColumn(name = "book_id")
     private Library book;
 
-    private LocalDateTime issueDate;
-    private LocalDateTime returnDate;
+    private LocalDate issueDate;
+
+    @Column(name = "due_date")
+    private LocalDate dueDate;
+
+    private LocalDate returnDate;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
+    @Column(nullable = false)
     private int fineAmount;
 }
