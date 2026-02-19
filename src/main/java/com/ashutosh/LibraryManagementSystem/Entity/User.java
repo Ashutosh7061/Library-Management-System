@@ -3,8 +3,7 @@ package com.ashutosh.LibraryManagementSystem.Entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
@@ -17,6 +16,9 @@ import lombok.Setter;
                 @UniqueConstraint(columnNames = "phoneNo")
         }
 )
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -32,5 +34,7 @@ public class User {
     private String phoneNo;
 
     private int noOfBooksTaken = 0;
+
+    private String password;
 
 }

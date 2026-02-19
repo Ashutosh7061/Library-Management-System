@@ -1,22 +1,46 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
 import com.ashutosh.LibraryManagementSystem.DTO.UserBookCountDTO;
+import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
+import com.ashutosh.LibraryManagementSystem.Entity.Library;
+import com.ashutosh.LibraryManagementSystem.Entity.User;
+import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
+import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/manager")
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
+    private final LibraryService libraryService;
+
+    @PostMapping("/addBook")
+    public Library addBook(@RequestBody Library book){
+        return libraryService.addBook(book);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteBook(@PathVariable Long id){
+        libraryService.deleteBook(id);
+        return "Book deleted successfully";
+    }
+
+    // we can't directly use .findAll because controller layer should not directly talk to repository directly.
+    @GetMapping("/all")
+    public List<Library> getAllBooks(){
+        return libraryService.getAllBooks();
+    }
+
+    @GetMapping("/allUsers")
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
+    }
 
     @GetMapping("/books/equal")
     public List<UserBookCountDTO> userWithExactBooks(@RequestParam int count){
@@ -31,6 +55,15 @@ public class AdminController {
     @GetMapping("/books/greater-than")
     public List<UserBookCountDTO> userWithGreaterThanBooks(@RequestParam int count){
         return userService.getUserWithGreaterThanBooks(count);
+    }
+
+
+    @GetMapping("/users/{userId}/transaction")
+    public List<UserTransactionDTO> getUserTransaction(
+            @PathVariable Long userId,
+            @RequestParam(required = false) TransactionStatus status
+    ){
+        return userService.getUserTransactionDetails(userId, status);
     }
 
 

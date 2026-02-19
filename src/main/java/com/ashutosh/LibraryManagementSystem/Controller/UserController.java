@@ -3,9 +3,9 @@ package com.ashutosh.LibraryManagementSystem.Controller;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
-import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,16 +24,22 @@ public class UserController {
         return userService.registerUser(user);
     }
 
-    @GetMapping("/allUsers")
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
-    }
-
     @GetMapping("/{userId}/transaction")
     public List<UserTransactionDTO> getUserTransaction(
             @PathVariable Long userId,
-            @RequestParam(required = false)TransactionStatus status){
+            @RequestParam(required = false)TransactionStatus status
+    ){
         return userService.getUserTransactionDetails(userId, status);
+    }
+
+    @PostMapping("/issue")
+    public String issueBook(@RequestParam Long userId, @RequestParam Long bookId){
+        return libraryService.issueBook(userId, bookId);
+    }
+
+    @PostMapping("/return")
+    public String returnBook(@RequestParam Long userId, @RequestParam Long bookId){
+        return libraryService.returnBook(userId,bookId);
     }
 
 
@@ -44,6 +50,4 @@ public class UserController {
 
         return libraryService.renewBook(userId, transactionId);
     }
-
-
 }
