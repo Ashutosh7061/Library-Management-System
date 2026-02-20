@@ -4,7 +4,9 @@ import com.ashutosh.LibraryManagementSystem.DTO.UserBookCountDTO;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
+import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
+import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import lombok.Getter;
@@ -19,6 +21,7 @@ public class AdminController {
 
     private final UserService userService;
     private final LibraryService libraryService;
+    private final UserRepository userRepository;
 
     @PostMapping("/addBook")
     public Library addBook(@RequestBody Library book){
@@ -64,6 +67,32 @@ public class AdminController {
             @RequestParam(required = false) TransactionStatus status
     ){
         return userService.getUserTransactionDetails(userId, status);
+    }
+
+    @PutMapping("/make-admin/{email}")
+    public String makeAdmin(@PathVariable String email){
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.getRoles().add(Role.ROLE_ADMIN);
+
+        userRepository.save(user);
+
+        return "User promoted to ADMIN";
+    }
+
+    @PutMapping("/remove-admin/{email}")
+    public String removeAdmin(@PathVariable String email){
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        user.getRoles().remove(Role.ROLE_ADMIN);
+
+        userRepository.save(user);
+
+        return "Admin role removed";
     }
 
 

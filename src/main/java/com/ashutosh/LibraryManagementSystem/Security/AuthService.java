@@ -5,7 +5,7 @@ import com.ashutosh.LibraryManagementSystem.DTO.LoginResponseDTO;
 import com.ashutosh.LibraryManagementSystem.DTO.SignupRequestDTO;
 import com.ashutosh.LibraryManagementSystem.DTO.SignupResponseDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
-import com.ashutosh.LibraryManagementSystem.Exception.DuplicateUserException;
+import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +56,7 @@ public class AuthService {
                 .email(signupRequestDTO.getEmail())
                 .phoneNo(signupRequestDTO.getPhoneNo())
                 .password(passwordEncoder.encode(signupRequestDTO.getPassword()))
+                .roles(Set.of(Role.ROLE_USER))
                 .build();
 
         user = userRepository.save(user);

@@ -1,9 +1,13 @@
 package com.ashutosh.LibraryManagementSystem.Entity;
 
+import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,5 +40,9 @@ public class User {
     private int noOfBooksTaken = 0;
 
     private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    Set<Role> roles = new HashSet<>();
 
 }
