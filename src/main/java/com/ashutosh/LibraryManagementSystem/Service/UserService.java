@@ -94,7 +94,12 @@ public class UserService {
     }
 
 
-    public List<UserTransactionDTO> getUserTransactionDetails(Long userId, TransactionStatus status){
+    public List<UserTransactionDTO> getUserTransactionDetails(String email, TransactionStatus status){
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Long userId = user.getId();
 
         List<BookTransaction> transactions;
 

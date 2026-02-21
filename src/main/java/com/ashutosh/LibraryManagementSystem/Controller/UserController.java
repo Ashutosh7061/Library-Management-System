@@ -3,12 +3,14 @@ package com.ashutosh.LibraryManagementSystem.Controller;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
+import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,36 +20,46 @@ public class UserController {
 
     private final UserService userService;
     private final LibraryService libraryService;
+    private final UserRepository userRepository;
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user){
-        return userService.registerUser(user);
-    }
 
-    @GetMapping("/{userId}/transaction")
+    @GetMapping("/transaction")
     public List<UserTransactionDTO> getUserTransaction(
-            @PathVariable Long userId,
+            Principal principal,
             @RequestParam(required = false)TransactionStatus status
     ){
-        return userService.getUserTransactionDetails(userId, status);
+
+        String email = principal.getName();
+        return userService.getUserTransactionDetails(email, status);
     }
 
+
     @PostMapping("/issue")
-    public String issueBook(@RequestParam Long userId, @RequestParam Long bookId){
-        return libraryService.issueBook(userId, bookId);
+    public String issueBook(@RequestParam Long bookId,
+                            Principal principal) {
+
+        String email = principal.getName(); // username from JWT
+
+        return libraryService.issueBookByEmail(email, bookId);
     }
 
     @PostMapping("/return")
-    public String returnBook(@RequestParam Long userId, @RequestParam Long bookId){
-        return libraryService.returnBook(userId,bookId);
+    public String returnBook(@RequestParam Long bookId,
+                             Principal principal){
+
+        String email = principal.getName();
+
+        return libraryService.returnBook(email,bookId);
     }
 
 
-    @PostMapping("/{userId}/transaction/{transactionId}/renew")
+    @PostMapping("/transaction/{transactionId}/renew")
     public String renewBook(
-            @PathVariable Long userId,
-            @PathVariable Long transactionId) {
+            @PathVariable Long transactionId,
+            Principal principal) {
 
-        return libraryService.renewBook(userId, transactionId);
+        String email = principal.getName();
+
+        return libraryService.renewBook(email, transactionId);
     }
 }

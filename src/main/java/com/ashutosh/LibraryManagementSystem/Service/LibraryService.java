@@ -51,9 +51,12 @@ public class LibraryService {
 
     //For issuing book
     @Transactional
-    public String issueBook(Long userId, Long bookId){
+    public String issueBookByEmail(String email, Long bookId){
 
-        User user = userService.getUser(userId);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Long userId = user.getId();
 
         boolean alreadyExist = transactionRepository.findByUser_IdAndBook_IdAndStatus(userId, bookId, TransactionStatus.ISSUED).isPresent();
 
@@ -79,7 +82,6 @@ public class LibraryService {
         BookTransaction transaction = new BookTransaction();
         transaction.setUser(user);
         transaction.setBook(book);
-//        transaction.setIssueDate(LocalDateTime.now());
 
         LocalDate issueDate = LocalDate.now();
         transaction.setIssueDate(issueDate);
@@ -89,28 +91,22 @@ public class LibraryService {
 
         transactionRepository.save(transaction);
 
-//        libraryRepository.save(book);
-
         return "Book issued successfully";
     }
 
     //For returning book
     @Transactional
-    public String returnBook(Long userId, Long bookId){
+    public String returnBook(String email, Long bookId){
 
-        User user = userService.getUser(userId);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Long userId = user.getId();
+
+//        User user = userService.getUser(userId);
 
         Library book = libraryRepository.findById(bookId)
                 .orElseThrow(()-> new BookNotAvailableException("Book not Found"));
-
-        //Start Transaction
-//        BookTransaction transaction =
-//                transactionRepository
-//                        .findByUser_IdAndStatus(userId, TransactionStatus.ISSUED)
-//                        .stream().filter(t-> t.getBook().getId().equals(bookId))
-//                        .findFirst()
-//                        .orElseThrow(()-> new BookNotAvailableException("No active issue found"));
-
 
         BookTransaction transaction =
                 transactionRepository
@@ -179,14 +175,19 @@ public class LibraryService {
     }
 
     @Transactional
-    public String renewBook(Long userID, Long transactionId){
+    public String renewBook(String email, Long transactionId){
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Long userId = user.getId();
 
         System.out.println(">>> RENEW BOOK API HIT <<<");
 
         BookTransaction transaction =
                 transactionRepository
                         .findByIdAndUser_IdAndStatus(
-                                transactionId, userID, TransactionStatus.ISSUED
+                                transactionId, userId, TransactionStatus.ISSUED
                         )
                         .orElseThrow(() ->
                                 new BookRenewalException("Active transaction not found")
