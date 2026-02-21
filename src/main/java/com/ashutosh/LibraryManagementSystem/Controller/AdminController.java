@@ -7,12 +7,15 @@ import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
+import com.ashutosh.LibraryManagementSystem.Service.AdminService;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 @RestController
 @RequiredArgsConstructor
@@ -22,15 +25,16 @@ public class AdminController {
     private final UserService userService;
     private final LibraryService libraryService;
     private final UserRepository userRepository;
+    private final AdminService adminService;
 
     @PostMapping("/addBook")
     public Library addBook(@RequestBody Library book){
         return libraryService.addBook(book);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteBook(@PathVariable Long id){
-        libraryService.deleteBook(id);
+    @DeleteMapping("/delete/{bookId}")
+    public String deleteBook(@PathVariable Long bookId){
+        libraryService.deleteBook(bookId);
         return "Book deleted successfully";
     }
 
@@ -63,36 +67,27 @@ public class AdminController {
 
     @GetMapping("/users/{userId}/transaction")
     public List<UserTransactionDTO> getUserTransaction(
-            @PathVariable Long userId,
+            Principal principal,
             @RequestParam(required = false) TransactionStatus status
     ){
-        return userService.getUserTransactionDetails(userId, status);
+
+        String email = principal.getName();
+
+        return userService.getUserTransactionDetails(email, status);
     }
 
-    @PutMapping("/make-admin/{email}")
-    public String makeAdmin(@PathVariable String email){
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.getRoles().add(Role.ROLE_ADMIN);
-
-        userRepository.save(user);
-
-        return "User promoted to ADMIN";
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/make-admin/{userId}")
+    public String makeAdmin(@PathVariable Long userId){
+        return adminService.makeAdminById(userId);
     }
 
-    @PutMapping("/remove-admin/{email}")
-    public String removeAdmin(@PathVariable String email){
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow();
-
-        user.getRoles().remove(Role.ROLE_ADMIN);
-
-        userRepository.save(user);
-
-        return "Admin role removed";
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/remove-admin/{userId}")
+    public String removeAdmin(@PathVariable Long userId){
+        System.out.println("Inside remove controller");
+        return adminService.removeUserFromAdmin(userId);
     }
 
 
