@@ -26,4 +26,8 @@ public class Library {
     private String author;
     private int noOfBooks;
     private double price;
+    
+    private String genre;
+    private String description;
+    
 }

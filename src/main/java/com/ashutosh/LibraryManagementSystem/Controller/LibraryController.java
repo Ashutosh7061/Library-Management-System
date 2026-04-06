@@ -1,10 +1,10 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
-import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,13 +19,14 @@ public class LibraryController {
         return libraryService.getAllBookTitles();
     }
 
-    @GetMapping("/search/title")
-    public List<Library> searchByTitle(@RequestParam String title){
-        return libraryService.searchBookByTitle(title);
+    @GetMapping("/search")
+    public List<?> searchBooks(
+            @RequestParam(required = false) Long bookId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            Principal principal
+    ) {
+        return libraryService.searchBooks(bookId, title, author,principal);
     }
 
-    @GetMapping("/search/author")
-    public List<Library> searchByAuthor(@RequestParam String author){
-        return libraryService.searchBookByAuthor(author);
-    }
 }

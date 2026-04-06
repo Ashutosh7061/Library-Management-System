@@ -24,10 +24,7 @@ public class UserController {
 
 
     @GetMapping("/transaction")
-    public List<UserTransactionDTO> getUserTransaction(
-            Principal principal,
-            @RequestParam(required = false)TransactionStatus status
-    ){
+    public List<UserTransactionDTO> getUserTransaction(Principal principal, @RequestParam(required = false)TransactionStatus status){
 
         String email = principal.getName();
         return userService.getUserTransactionDetails(email, status);

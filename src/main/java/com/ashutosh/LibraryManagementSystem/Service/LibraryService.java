@@ -1,8 +1,11 @@
 package com.ashutosh.LibraryManagementSystem.Service;
 
+import com.ashutosh.LibraryManagementSystem.DTO.PublicSearchResponseDTO;
+import com.ashutosh.LibraryManagementSystem.DTO.UserSearchResponseDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
+import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Exception.*;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;
@@ -13,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -102,9 +107,7 @@ public class LibraryService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Long userId = user.getId();
-
-//        User user = userService.getUser(userId);
-
+        
         Library book = libraryRepository.findById(bookId)
                 .orElseThrow(()-> new BookNotAvailableException("Book not Found"));
 
@@ -140,7 +143,6 @@ public class LibraryService {
         return libraryRepository.findAllTitles();
     }
 
-
     public List<Library> searchBookByTitle(String title){
         List<Library> books = libraryRepository.findByTitleContainingIgnoreCase(title);
 
@@ -160,6 +162,68 @@ public class LibraryService {
         return books;
     }
 
+    public List<?> searchBooks(Long bookId, String title, String author, Principal principal) {
+
+        List<Library> books;
+
+        if(bookId != null) {
+            Library book = libraryRepository.findById(bookId)
+                    .orElseThrow(() -> new BookNotAvailableException("Book not found with given Id"));
+
+            books = List.of(book);
+        }
+        else if (title != null && !title.isBlank()) {
+            books = searchBookByTitle(title);
+
+        }
+        else if (author != null && !author.isBlank()) {
+            books = searchBookByAuthor(author);
+        }
+        else {
+            throw new IllegalArgumentException("Provide at least one search parameter");
+        }
+
+        // Public DTO
+        if (principal == null) {
+            List<PublicSearchResponseDTO> result = new ArrayList<>();
+
+            for (Library b : books) {
+                result.add(new PublicSearchResponseDTO(
+                        b.getId(),
+                        b.getTitle(),
+                        b.getAuthor(),
+                        b.getGenre(),
+                        b.getNoOfBooks() > 0
+                ));
+            }
+            return result;
+        }
+
+        // Logged-in-user
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Admin
+        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
+            return books;
+        }
+
+        // Normal user
+        List<UserSearchResponseDTO> result = new ArrayList<>();
+
+        for (Library b : books) {
+            result.add(new UserSearchResponseDTO(
+                    b.getId(),
+                    b.getTitle(),
+                    b.getAuthor(),
+                    b.getGenre(),
+                    b.getNoOfBooks() > 0,
+                    b.getDescription()
+            ));
+        }
+        return result;
+    }
+
 
     public int calculateFine(LocalDate dueDate, LocalDate returnDate){
         if(dueDate == null || returnDate == null){
@@ -168,7 +232,6 @@ public class LibraryService {
         if(!returnDate.isAfter(dueDate)){
             return 0;
         }
-
         long daysKept = ChronoUnit.DAYS.between(dueDate,returnDate);
 
         return (int) daysKept * 2;
