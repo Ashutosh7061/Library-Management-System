@@ -204,7 +204,7 @@ public class LibraryService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Admin
-        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
+        if (user.getRole() == (Role.ROLE_ADMIN)) {
             return books;
         }
 

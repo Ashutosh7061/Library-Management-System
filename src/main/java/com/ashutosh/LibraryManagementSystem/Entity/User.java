@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@JsonPropertyOrder({ "id", "name", "email", "phoneNo", "noOfBooksTaken" })
+@JsonPropertyOrder({ "id", "name", "email", "phoneNo", "noOfBooksTaken", "role", "password" })
 @Table(
         name = "user",
         uniqueConstraints = {
@@ -41,8 +41,8 @@ public class User {
 
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    Set<Role> roles = new HashSet<>();
+    @Column(nullable = false)
+    private Role role;
 
 }
