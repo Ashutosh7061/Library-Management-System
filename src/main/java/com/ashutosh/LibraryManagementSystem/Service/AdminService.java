@@ -19,32 +19,26 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with this id."));
 
-        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
+        if (user.getRole() == (Role.ROLE_ADMIN)) {
             return "User is already an ADMIN";
         }
 
-        user.getRoles().add(Role.ROLE_ADMIN);
-//        userRepository.save(user);
+        user.setRole(Role.ROLE_ADMIN);
         return "User promoted to ADMIN";
     }
 
-    @Transactional
-    public String removeUserFromAdmin(Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException("User not found with this id."));
 
-        if(!user.getRoles().contains(Role.ROLE_ADMIN)){
+    @Transactional
+    public String removeUserFromAdmin(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with this id."));
+
+        if (user.getRole() != Role.ROLE_ADMIN) {
             return "User is not an ADMIN";
         }
+        user.setRole(Role.ROLE_USER);
 
-        if(user.getRoles().size() == 1){
-            return "Cannot remove the only role assigned to user";
-        }
-
-        user.getRoles().remove(Role.ROLE_ADMIN);
-
-//        userRepository.save(user);
         return "Admin role removed";
-
     }
 }

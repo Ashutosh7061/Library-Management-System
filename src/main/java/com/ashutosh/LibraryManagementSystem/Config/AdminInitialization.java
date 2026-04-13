@@ -32,11 +32,11 @@ public class AdminInitialization implements CommandLineRunner {
             admin.setPhoneNo("9999999999");
             admin.setPassword(passwordEncoder.encode("admin@123"));
 
-            Set<Role> roles = new HashSet<>();
-            roles.add(Role.ROLE_ADMIN);
-            roles.add(Role.ROLE_USER);
+//            Set<Role> roles = new HashSet<>();
+            admin.setRole(Role.ROLE_ADMIN);
+//            admin.setRole(Role.ROLE_USER);
 
-            admin.setRoles(roles);
+//            admin.setRole(roles);
 
             userRepository.save(admin);
 

@@ -38,7 +38,7 @@ public class AuthService {
 
         String token = authUtil.generateAccessToken(user);
 
-        return new LoginResponseDTO(token, user.getId());
+        return new LoginResponseDTO(token, user.getId(), user.getRole());
     }
 
 
@@ -56,7 +56,7 @@ public class AuthService {
                 .email(signupRequestDTO.getEmail())
                 .phoneNo(signupRequestDTO.getPhoneNo())
                 .password(passwordEncoder.encode(signupRequestDTO.getPassword()))
-                .roles(Set.of(Role.ROLE_USER))
+                .role(Role.ROLE_USER)
                 .build();
 
         user = userRepository.save(user);
