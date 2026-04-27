@@ -39,7 +39,7 @@ public class LibraryService {
                 .isPresent();
 
         if(exist){
-            throw new DuplicateBookException("This book by the same author already exixts");
+            throw new DuplicateBookException("This book by the same author already exists");
         }
         return libraryRepository.save(book);
     }
