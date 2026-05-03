@@ -1,11 +1,11 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
+import com.ashutosh.LibraryManagementSystem.DTO.DashboardResponseDto;
 import com.ashutosh.LibraryManagementSystem.DTO.UserBookCountDTO;
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
-import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import com.ashutosh.LibraryManagementSystem.Service.AdminService;
 import com.ashutosh.LibraryManagementSystem.Service.LibraryService;
 import com.ashutosh.LibraryManagementSystem.Service.UserService;
@@ -22,7 +22,7 @@ public class AdminController {
 
     private final UserService userService;
     private final LibraryService libraryService;
-    private final UserRepository userRepository;
+
     private final AdminService adminService;
 
     @PostMapping("/addBook")
@@ -88,5 +88,10 @@ public class AdminController {
         return adminService.removeUserFromAdmin(userId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getDashboard")
+    public DashboardResponseDto getDashboardDetails(){
+        return adminService.getDashboardDetails();
+    }
 
 }

@@ -17,4 +17,6 @@ public interface LibraryRepository extends JpaRepository<Library, Long> {
 
     @Query("SELECT l.title FROM Library l")
     List<String> findAllTitles();
+
+    long countByNoOfBooksGreaterThan(int count);
 }
