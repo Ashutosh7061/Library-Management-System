@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @JsonPropertyOrder({ "transactionId", "bookId", "bookTitle", "bookAuthor", "issueDate", "returnDate", "status" })
 public class UserTransactionDTO {
 
+    private  Long userId;
+
     private Long transactionId;
     private Long bookId;
 
@@ -26,6 +28,7 @@ public class UserTransactionDTO {
     private TransactionStatus status;
 
     public UserTransactionDTO(BookTransaction tx){
+        this.userId = tx.getUser().getId();
         this.transactionId = tx.getId();
         this.bookId = tx.getBook().getId();
         this.bookTitle = tx.getBook().getTitle();

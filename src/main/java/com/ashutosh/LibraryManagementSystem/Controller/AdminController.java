@@ -62,16 +62,11 @@ public class AdminController {
         return userService.getUserWithGreaterThanBooks(count);
     }
 
-
-    @GetMapping("/users/{userId}/transaction")
-    public List<UserTransactionDTO> getUserTransaction(
-            Principal principal,
-            @RequestParam(required = false) TransactionStatus status
-    ){
-
-        String email = principal.getName();
-
-        return userService.getUserTransactionDetails(email, status);
+    @GetMapping("/transactions")
+    public List<UserTransactionDTO> getTransactions(@RequestParam(required = false) Long userId,
+                                                    @RequestParam(required = false) TransactionStatus status
+    ) {
+        return adminService.getTransactions(userId, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

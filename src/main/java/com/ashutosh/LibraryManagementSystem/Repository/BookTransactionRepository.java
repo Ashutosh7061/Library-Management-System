@@ -18,4 +18,7 @@ public interface BookTransactionRepository extends JpaRepository<BookTransaction
     Optional<BookTransaction> findByIdAndUser_IdAndStatus(Long transactionId,Long userId, TransactionStatus status);
 
     long countByStatus(TransactionStatus status);
+
+    List<BookTransaction> findByStatus(TransactionStatus status);
+
 }

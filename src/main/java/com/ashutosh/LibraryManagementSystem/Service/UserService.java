@@ -5,7 +5,6 @@ import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
 import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
-import com.ashutosh.LibraryManagementSystem.Exception.DuplicateBookException;
 import com.ashutosh.LibraryManagementSystem.Exception.DuplicateUserException;
 import com.ashutosh.LibraryManagementSystem.Exception.UserNotFoundException;
 import com.ashutosh.LibraryManagementSystem.Repository.BookTransactionRepository;

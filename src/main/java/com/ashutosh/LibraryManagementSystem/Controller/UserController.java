@@ -1,6 +1,7 @@
 package com.ashutosh.LibraryManagementSystem.Controller;
 
 import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
+import com.ashutosh.LibraryManagementSystem.Entity.Library;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
 import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
@@ -20,16 +21,15 @@ public class UserController {
 
     private final UserService userService;
     private final LibraryService libraryService;
-    private final UserRepository userRepository;
 
 
     @GetMapping("/transaction")
-    public List<UserTransactionDTO> getUserTransaction(Principal principal, @RequestParam(required = false)TransactionStatus status){
+    public List<UserTransactionDTO> getUserTransaction(Principal principal,
+                                                       @RequestParam(required = false)TransactionStatus status){
 
         String email = principal.getName();
         return userService.getUserTransactionDetails(email, status);
     }
-
 
     @PostMapping("/issue")
     public String issueBook(@RequestParam Long bookId,
@@ -49,7 +49,6 @@ public class UserController {
         return libraryService.returnBook(email,bookId);
     }
 
-
     @PostMapping("/transaction/{transactionId}/renew")
     public String renewBook(
             @PathVariable Long transactionId,
@@ -58,5 +57,10 @@ public class UserController {
         String email = principal.getName();
 
         return libraryService.renewBook(email, transactionId);
+    }
+
+    @GetMapping("/all")
+    public List<Library> getAllBooks(){
+        return libraryService.getAllBooks();
     }
 }

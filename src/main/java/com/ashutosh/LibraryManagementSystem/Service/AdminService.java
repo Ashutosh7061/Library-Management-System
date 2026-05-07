@@ -1,6 +1,8 @@
 package com.ashutosh.LibraryManagementSystem.Service;
 
 import com.ashutosh.LibraryManagementSystem.DTO.DashboardResponseDto;
+import com.ashutosh.LibraryManagementSystem.DTO.UserTransactionDTO;
+import com.ashutosh.LibraryManagementSystem.Entity.BookTransaction;
 import com.ashutosh.LibraryManagementSystem.Entity.User;
 import com.ashutosh.LibraryManagementSystem.Enum.Role;
 import com.ashutosh.LibraryManagementSystem.Enum.TransactionStatus;
@@ -11,6 +13,8 @@ import com.ashutosh.LibraryManagementSystem.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -63,5 +67,30 @@ public class AdminService {
                 totalIssuedBook,
                 availableBook
         );
+    }
+
+    public List<UserTransactionDTO> getTransactions(Long userId, TransactionStatus status) {
+        List<BookTransaction> transactions;
+
+        if(userId == null) {
+            if(status == null) {
+                transactions = bookTransactionRepository.findAll();
+            }
+            else {
+                transactions = bookTransactionRepository.findByStatus(status);
+            }
+        }
+        else {
+            if(status == null) {
+                transactions = bookTransactionRepository.findByUser_Id(userId);
+            }
+            else {
+                transactions = bookTransactionRepository.findByUser_IdAndStatus(userId, status);
+            }
+        }
+
+        return transactions.stream()
+                .map(UserTransactionDTO::new)
+                .toList();
     }
 }
