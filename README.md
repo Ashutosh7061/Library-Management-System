@@ -74,6 +74,110 @@ src/main/java/com/ashutosh/LibraryManagementSystem/
 └── Exception/      # Custom exceptions
 ```
 
+# Library Management System – Frontend
+
+A React-based frontend for the Library Management System. It provides an interface for managing books, users, and library transactions by communicating with the Spring Boot backend through REST APIs.
+
+## Features
+
+- **Book Management:** View, add, edit, and delete books.
+- **Book Inventory:** Display book details, available copies, and issue status.
+- **User Management:** Manage library users.
+- **Transaction Management:** Track book issuing and returning.
+- **Dashboard:** View library-related information and statistics.
+- **API Integration:** Communicate with the backend using REST APIs.
+- **Authentication:** Supports secure authentication and role-based access.
+
+## Tech Stack
+
+- React.js
+- JavaScript
+- HTML5
+- CSS3
+- React Hooks
+- Fetch API
+- REST APIs
+
+## Project Structure
+
+```text
+frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── pages/
+│   ├── App.js
+│   ├── index.js
+│   └── ...
+├── package.json
+└── README.md
+```
+
+*The structure may vary depending on the current project implementation.*
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repository-url>
+```
+
+### 2. Navigate to the Frontend Folder
+
+```bash
+cd frontend
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the Development Server
+
+```bash
+npm start
+```
+
+If your project uses Vite, run:
+
+```bash
+npm run dev
+```
+
+## Backend Integration
+
+The frontend communicates with the Spring Boot backend through REST API endpoints.
+
+Default backend URL:
+
+```text
+http://localhost:8080
+```
+
+Make sure the backend server and MySQL database are running before using the application.
+
+Update the API base URL in the frontend configuration if your backend runs on a different port or URL.
+
+## Requirements
+
+- Node.js
+- npm
+- Running Spring Boot backend
+- MySQL database configured through the backend
+
+## Future Improvements
+
+- Improved responsive design
+- Advanced book search and filtering
+- Enhanced dashboard analytics
+- Better user experience and interface improvements
+
+
+
 ## Author
 **Ashutosh**  
 GitHub:https://github.com/Ashutosh7061   
